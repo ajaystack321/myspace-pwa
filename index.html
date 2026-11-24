@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#191a2e">
+  <meta name="description" content="Your personal space for notes, links, images and apps.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MySpace">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <title>MySpace — Personal Dashboard</title>
+  <style>
+    :root{--bg:#f5f6fa;--surface:#fff;--ink:#202438;--muted:#8990a4;--line:#e9eaf1;--primary:#6758e8;--sidebar:#191a2e;--shadow:0 8px 24px #2024380a}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,textarea,select{font:inherit}button{cursor:pointer}.app{min-height:100vh}
+    .sidebar{position:fixed;inset:0 auto 0 0;width:248px;background:var(--sidebar);color:#fff;padding:26px 18px;z-index:20;display:flex;flex-direction:column}
+    .brand{font-size:24px;font-weight:850;letter-spacing:-1px;margin:2px 10px 36px}.brand span{color:#a79cff}
+    .nav-label{font-size:10px;letter-spacing:1.4px;color:#85869f;margin:20px 12px 10px}
+    .nav button{width:100%;border:0;background:transparent;color:#b6b6c9;text-align:left;padding:12px 13px;border-radius:10px;margin:3px 0;font-weight:550}
+    .nav button:hover,.nav button.active{background:#34334e;color:white}.sidebar-foot{margin-top:auto;color:#777991;font-size:11px;padding:14px 10px}
+    .main{margin-left:248px;padding:30px 34px 50px;max-width:1600px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+    h1{font-size:26px;letter-spacing:-.7px;margin:0}.sub{color:var(--muted);font-size:13px;margin:7px 0 0}
+    .top-actions{display:flex;align-items:center;gap:9px}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:650}
+    .btn-primary{background:var(--primary);color:#fff}.btn-soft{background:#eeedff;color:var(--primary)}.btn-plain{background:#f1f2f7;color:#52566a}
+    .menu-btn{display:none}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:25px}
+    .stat,.panel,.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+    .stat{padding:18px}.stat-icon{font-size:21px}.stat small{display:block;color:var(--muted);margin-top:10px}.stat strong{display:block;font-size:27px;margin-top:5px}
+    .toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:17px}
+    .search{width:min(360px,100%);position:relative}.search input{width:100%}
+    input,textarea,select{width:100%;border:1px solid var(--line);border-radius:9px;background:#fff;padding:11px 12px;color:var(--ink);outline:none}
+    input:focus,textarea:focus,select:focus{border-color:#958cf0;box-shadow:0 0 0 3px #6758e81a}
+    .filters{display:flex;gap:7px;flex-wrap:wrap}.filters button{border:1px solid var(--line);background:#fff;color:#64697c;padding:9px 12px;border-radius:8px;font-size:12px}
+    .filters button.active{background:#eeedff;color:var(--primary);border-color:#d9d5ff}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .item{overflow:hidden;min-width:0}.preview{height:150px;background:#f0efff;display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden;color:#7467df}
+    .preview img{width:100%;height:100%;object-fit:cover}.item-body{padding:15px}.tag{display:inline-block;border-radius:30px;padding:5px 9px;background:#eeedff;color:var(--primary);font-size:10px;font-weight:750;letter-spacing:.4px}
+    .item h3{font-size:16px;margin:12px 0 7px;overflow-wrap:anywhere}.item p{font-size:12px;color:var(--muted);line-height:1.55;overflow-wrap:anywhere;margin:0}
+    .category{margin-top:8px!important}.item-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}.item-actions button{border:0;border-radius:7px;background:#f1f2f7;padding:8px 10px;font-size:11px;color:#454a5e}.item-actions .danger{color:#d84b60}
+    .empty{grid-column:1/-1;text-align:center;padding:58px 18px;background:#fff;border:1px dashed #d8d9e4;border-radius:14px;color:var(--muted)}.empty .big{font-size:42px;margin-bottom:10px}
+    .modal-bg{position:fixed;inset:0;background:#10132699;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal-bg.show{display:flex}
+    .modal{background:#fff;width:min(520px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:23px;box-shadow:0 25px 80px #0003}
+    .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.modal-head h2{margin:0;font-size:20px}.modal-head p{margin:6px 0 0}
+    .close{border:0;background:#f0f1f6;border-radius:8px;padding:7px 10px}.field{margin:14px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}.hint{font-size:11px;color:var(--muted);margin-top:6px}
+    textarea{min-height:95px;resize:vertical}.form-actions{display:flex;gap:9px;margin-top:20px}.form-actions button{flex:1}
+    .notice{display:none;padding:11px 13px;border-radius:9px;background:#fff7e6;color:#815b15;font-size:12px;margin-bottom:16px}.notice.show{display:block}
+    .mobile-overlay{display:none}
+    @media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:720px){.sidebar{transform:translateX(-100%);transition:transform .22s}.sidebar.open{transform:translateX(0)}.mobile-overlay.show{display:block;position:fixed;inset:0;background:#11132677;z-index:15}.main{margin:0;padding:20px 15px 40px}.menu-btn{display:inline-block}.topbar{align-items:flex-start}.topbar h1{font-size:22px}.top-actions .btn-soft{display:none}.grid{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}.filters{overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.filters button{white-space:nowrap}.stats{gap:10px}.stat{padding:14px}.stat strong{font-size:23px}}
+    @media(min-width:721px){.sidebar.open{transform:none}}
+  </style>
+</head>
+<body>
+<div class="mobile-overlay" id="overlay" onclick="toggleMenu(false)"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="brand">My<span>Space.</span></div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-filter="all">▦ &nbsp; Dashboard</button>
+    <button data-filter="text">▤ &nbsp; My Notes</button>
+    <button data-filter="link">↗ &nbsp; My Links</button>
+    <button data-filter="image">▧ &nbsp; My Images</button>
+    <button data-filter="app">⊞ &nbsp; My Apps</button>
+  </nav>
+  <div class="nav-label">MANAGEMENT</div>
+  <nav class="nav"><button id="sidebarAdd">＋ &nbsp; Add New Item</button></nav>
+  <div class="sidebar-foot">Personal workspace · v1.0</div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <button class="btn btn-plain menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+      <div><h1>Dashboard</h1><p class="sub">Your notes, links, images and apps — all in one place.</p></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-soft" id="installBtn" hidden>↓ Install App</button>
+      <button class="btn btn-primary" id="addBtn">＋ Add New</button>
+    </div>
+  </header>
+
+  <div class="notice" id="storageNotice">Browser storage is nearly full. Try smaller images or export your data before adding more.</div>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-icon">▦</div><small>Total Items</small><strong id="totalCount">0</strong></div>
+    <div class="stat"><div class="stat-icon">▤</div><small>Notes</small><strong id="noteCount">0</strong></div>
+    <div class="stat"><div class="stat-icon">↗</div><small>Links</small><strong id="linkCount">0</strong></div>
+    <div class="stat"><div class="stat-icon">⊞</div><small>Apps</small><strong id="appCount">0</strong></div>
+  </section>
+
+  <div class="toolbar">
+    <div class="search"><input id="searchInput" type="search" placeholder="⌕  Search your items..." aria-label="Search items"></div>
+    <div class="filters" id="filters">
+      <button class="active" data-filter="all">All</button><button data-filter="text">Notes</button>
+      <button data-filter="link">Links</button><button data-filter="image">Images</button><button data-filter="app">Apps</button>
+    </div>
+  </div>
+  <section class="grid" id="itemGrid" aria-live="polite"></section>
+</main>
+
+<div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head"><div><h2 id="modalTitle">Add New Item</h2><p class="sub">Save something to your workspace.</p></div><button class="close" id="closeModal" aria-label="Close">✕</button></div>
+    <form id="itemForm">
+      <input type="hidden" id="editId">
+      <div class="field"><label for="type">Content Type</label><select id="type"><option value="text">Text / Note</option><option value="link">Website / Link</option><option value="image">Image</option><option value="app">Application / App</option></select></div>
+      <div class="field"><label for="title">Title *</label><input id="title" maxlength="100" required placeholder="Enter a title"></div>
+      <div class="field"><label for="description">Description / Details</label><textarea id="description" maxlength="1500" placeholder="Write details..."></textarea></div>
+      <div class="field" id="urlField"><label for="url">Website URL</label><input id="url" type="url" placeholder="https://example.com"><div class="hint">Use a full URL starting with https://</div></div>
+      <div class="field" id="imageField" hidden><label for="imageFile">Upload Image</label><input id="imageFile" type="file" accept="image/*"><div class="hint">For best performance, use images under 1 MB. Images are stored on this device.</div></div>
+      <div class="field"><label for="category">Category (optional)</label><input id="category" maxlength="50" placeholder="Work, Personal, Design..."></div>
+      <div class="form-actions"><button type="button" class="btn btn-plain" id="cancelBtn">Cancel</button><button type="submit" class="btn btn-primary" id="saveBtn">Save Item</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = 'myspace_items_v1';
+  const icons = {text:'📝',link:'🔗',image:'🖼️',app:'📱'};
+  let items = loadItems();
+  let currentFilter = 'all';
+  let deferredInstallPrompt = null;
+
+  function loadItems(){
+    try { const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(value) ? value : []; }
+    catch { return []; }
+  }
+  function persist(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); $('storageNotice').classList.remove('show'); return true; }
+    catch { $('storageNotice').classList.add('show'); alert('Storage is full. Remove a large image or export your data.'); return false; }
+  }
+  function escapeHTML(value=''){
+    return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  }
+  function safeURL(value=''){
+    try { const url = new URL(value); return ['https:','http:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
+  }
+  function setFilter(filter){
+    currentFilter = filter;
+    document.querySelectorAll('[data-filter]').forEach(button => button.classList.toggle('active', button.dataset.filter === filter));
+    render();
+    toggleMenu(false);
+  }
+  document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
+  $('searchInput').addEventListener('input', render);
+
+  function updateStats(){
+    $('totalCount').textContent = items.length;
+    $('noteCount').textContent = items.filter(x=>x.type==='text').length;
+    $('linkCount').textContent = items.filter(x=>x.type==='link').length;
+    $('appCount').textContent = items.filter(x=>x.type==='app').length;
+  }
+  function render(){
+    updateStats();
+    const query = $('searchInput').value.trim().toLowerCase();
+    const visible = items.filter(item => (currentFilter==='all'||item.type===currentFilter) &&
+      `${item.title} ${item.description} ${item.category}`.toLowerCase().includes(query));
+    const grid = $('itemGrid'); grid.replaceChildren();
+    if(!visible.length){
+      const empty=document.createElement('div'); empty.className='empty';
+      empty.innerHTML='<div class="big">📂</div><h3>No items found</h3><p style="margin:8px 0 16px">Add your first item to get started.</p><button class="btn btn-primary" id="emptyAdd">＋ Add New Item</button>';
+      grid.appendChild(empty); $('emptyAdd').addEventListener('click',()=>openModal()); return;
+    }
+    visible.forEach(item=>{
+      const article=document.createElement('article'); article.className='item';
+      const preview=document.createElement('div'); preview.className='preview';
+      if(item.type==='image' && item.image){
+        const img=document.createElement('img'); img.src=item.image; img.alt=item.title; preview.appendChild(img);
+      } else preview.textContent=icons[item.type] || '📄';
+      const body=document.createElement('div'); body.className='item-body';
+      body.innerHTML=`<span class="tag">${escapeHTML(item.type.toUpperCase())}</span><h3>${escapeHTML(item.title)}</h3><p>${escapeHTML(item.description||'No description added.')}</p>${item.category?`<p class="category">Category: ${escapeHTML(item.category)}</p>`:''}<div class="item-actions"></div>`;
+      const actions=body.querySelector('.item-actions');
+      const link=safeURL(item.url);
+      if(link){const open=document.createElement('button');open.textContent='↗ Open';open.addEventListener('click',()=>window.open(link,'_blank','noopener,noreferrer'));actions.appendChild(open);}
+      const edit=document.createElement('button');edit.textContent='✎ Edit';edit.addEventListener('click',()=>openModal(item));actions.appendChild(edit);
+      const del=document.createElement('button');del.textContent='Delete';del.className='danger';del.addEventListener('click',()=>deleteItem(item.id));actions.appendChild(del);
+      article.append(preview,body);grid.appendChild(article);
+    });
+  }
+  function updateFields(){
+    const type=$('type').value;
+    $('urlField').hidden = type==='text';
+    $('imageField').hidden = type!=='image';
+  }
+  $('type').addEventListener('change',updateFields);
+  function openModal(item=null){
+    $('itemForm').reset(); $('editId').value=item?.id||'';
+    $('modalTitle').textContent=item?'Edit Item':'Add New Item';
+    $('saveBtn').textContent=item?'Update Item':'Save Item';
+    $('type').value=item?.type||'text'; $('title').value=item?.title||'';
+    $('description').value=item?.description||''; $('url').value=item?.url||'';
+    $('category').value=item?.category||''; $('imageFile').value='';
+    $('imageFile').dataset.existingImage=item?.image||'';
+    updateFields(); $('modal').classList.add('show'); $('title').focus();
+  }
+  function closeModal(){ $('modal').classList.remove('show'); }
+  $('addBtn').addEventListener('click',()=>openModal());
+  $('sidebarAdd').addEventListener('click',()=>{openModal();toggleMenu(false);});
+  $('closeModal').addEventListener('click',closeModal); $('cancelBtn').addEventListener('click',closeModal);
+  $('modal').addEventListener('click',event=>{if(event.target===$('modal'))closeModal();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeModal();toggleMenu(false);}});
+  function readImage(file){
+    return new Promise((resolve,reject)=>{
+      if(!file){resolve('');return;}
+      if(!file.type.startsWith('image/')){reject(new Error('Please choose an image file.'));return;}
+      if(file.size>1024*1024){reject(new Error('Please choose an image smaller than 1 MB.'));return;}
+      const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('Could not read image.'));reader.readAsDataURL(file);
+    });
+  }
+  $('itemForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const id=$('editId').value; const old=items.find(x=>x.id===id);
+    const type=$('type').value; const url=$('url').value.trim();
+    if(type!=='text' && url && !safeURL(url)){alert('Enter a valid http:// or https:// URL.');return;}
+    let image=old?.image||'';
+    try { const uploaded=await readImage($('imageFile').files[0]); if(uploaded)image=uploaded; }
+    catch(error){alert(error.message);return;}
+    if(type!=='image') image='';
+    const item={id:id||crypto.randomUUID?.()||String(Date.now()),type,title:$('title').value.trim(),description:$('description').value.trim(),url:url,image,category:$('category').value.trim(),updatedAt:new Date().toISOString()};
+    const previous=items;
+    items=old?items.map(x=>x.id===id?item:x):[item,...items];
+    if(persist()){closeModal();render();}else{items=previous;}
+  });
+  function deleteItem(id){
+    if(!confirm('Delete this item?'))return;
+    const previous=items;items=items.filter(item=>item.id!==id);
+    if(persist())render();else items=previous;
+  }
+  function toggleMenu(open){
+    const sidebar=$('sidebar'); const shouldOpen=typeof open==='boolean'?open:!sidebar.classList.contains('open');
+    sidebar.classList.toggle('open',shouldOpen);$('overlay').classList.toggle('show',shouldOpen);
+  }
+  $('menuBtn').addEventListener('click',()=>toggleMenu());
+
+  // Export and import are available from the browser console via the functions below.
+  window.mySpaceExport = () => {
+    const blob=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='myspace-backup.json';a.click();URL.revokeObjectURL(url);
+  };
+  window.mySpaceImport = file => {
+    const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data))throw new Error();items=data; if(persist())render();}catch{alert('Invalid MySpace backup file.');}};reader.readAsText(file);
+  };
+
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();deferredInstallPrompt=event;$('installBtn').hidden=false;
+  });
+  $('installBtn').addEventListener('click',async()=>{
+    if(!deferredInstallPrompt)return;
+    deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;$('installBtn').hidden=true;
+  });
+  window.addEventListener('appinstalled',()=>{$('installBtn').hidden=true;});
+  if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(error=>console.error('Service worker registration failed:',error)));
+  }
+  render();
+})();
+</script>
+</body>
+</html>
